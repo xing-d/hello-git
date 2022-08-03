@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        /* 主题 */
+        
+        #main {
+            width: 980px;
+            margin: 0 auto;
+        }
+        /* 发布内容 */
+        
+        #form_box {
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #cdcdcd;
+            height: 150px;
+        }
+        /* 发布内容-文本域 */
+        
+        #comment {
+            width: 100%;
+            height: 50px;
+            resize: none;
+        }
+        /* 展示内容 */
+        
+        #comment_box {
+            display: none;
+            padding: 20px;
+            border: 1px solid #cdcdcd;
+        }
+        /* 每项展示内容 */
+        
+        .item {
+            width: 950px;
+            height: 50px;
+            background-color: #ccc;
+			margin-top: 10px;
+        }
+        /* 展示内容-文字 */
+        
+        .comdiv {
+            width: 800px;
+            float: left;
+            height: 50px;
+            line-height: 50px;
+        }
+        /* 编辑和删除按钮 */
+        
+        #send {
+            float: right;
+        }
+        /* 蒙版 */
+        
+        #close {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 555;
+            display: none;
+        }
+        /* 修改页 */
+        
+        #edit {
+            width: 300px;
+            width: 50%;
+            position: fixed;
+            top: 30%;
+            left: 40%;
+            z-index: 999;
+            display: none;
+        }
+        
+        #edit-comment {
+            width: 300px;
+            height: 50px;
+            resize: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 主题 -->
+    <div id="main">
+        <!-- 发布内容 -->
+        <div id="form_box">
+            <h2>网友评论</h2>
+            <!-- maxlength来限制最大字符数 -->
+            <textarea id="comment" placeholder="我有要话说..." maxlength="20"></textarea>
+            <div>还可以输入<span id="count">20</span>个字<button id="send" disabled>发布</button></div>
+        </div>
+        <!-- 展示内容 -->
+        <div id="comment_box">
+			<!-- 
+			<div class="item">
+				<div class="comdiv">888</div>
+				<button class="btnDel" style="float: right; margin-top: 18px;">删除</button>
+				<button class="btnEdit" style="float: right; margin-top: 18px;">编辑</button>
+			</div>
+			 -->
+        </div>
+    </div>
+    <!-- 蒙版 -->
+    <div id="close"></div>
+    <!-- 修改页 -->
+    <div id="edit">
+        <textarea id="edit-comment" maxlength="20"></textarea>
+        <button>修改</button>
+    </div>
+	<script src="js/jquery-3.6.0.js" type="text/javascript" charset="utf-8"></script>
+    <script>
+        $(function(){
+			$('#comment').on('input',function(e){
+				$('#count').text(20-$(this).val().length)
+				if ($(this).val().length>0) {
+					$('#send').removeAttr('disabled')
+				}
+			})
+			$('#send').click(function(e){
+				$("#comment_box").show()
+				$('<div class="item"><div class="comdiv">'+$('#comment').val()+'</div><button class="btnDel" style="float: right; margin-top: 18px;">删除</button><button class="btnEdit" style="float: right; margin-top: 18px;">编辑</button></div>').appendTo($("#comment_box"))
+				$('#comment').val('');
+				$('#count').text(20)
+				
+				$('.btnDel').off().click(function(e){
+					$(this).parent().remove();
+					if ($('#comment_box').children().length==0) {
+						$('#comment_box').hide();
+					}
+				})
+				$('.btnEdit').off().click(function(e){
+					$('#edit-comment').val($(this).siblings('.comdiv').text())
+					var inde = $('.btnEdit').index($(this))//根据当前jQuery对象获取在集合中的索引
+                    console.log(inde);
+					$('#close').show();
+					$('#edit').show().attr('data-id',inde);
+				})
+				
+			})
+			$('#edit button').off().click(function(){
+				$('#edit').hide();
+				$('#close').hide();
+				$(".comdiv").eq($("#edit").attr('data-id')).text($('#edit-comment').val())
+			})
+		})
+    </script>
+
+</body>
+
+</html>
